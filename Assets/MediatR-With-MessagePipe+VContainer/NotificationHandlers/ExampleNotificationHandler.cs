@@ -3,40 +3,39 @@ using UnityEngine;
 
 namespace MediatR_With_MessagePipe_VContainer
 {
-    public class YetAnotherNotification : INotification
-    {
-    }
-
     public sealed class ExampleNotificationHandler : 
-        INotificationHandler<ExampleNotification>, 
-        INotificationHandler<AnotherNotification>, 
+        INotificationHandler<ExampleNotification>,
+        INotificationHandler<AnotherNotification>,
         INotificationHandler<YetAnotherNotification>,
         IDisposable
     {
-        private readonly IDisposable m_Disposable;
         private IUnityMediatR m_UnityMediatR;
-    
+
+        public IDisposable MediatRDisposables { get; set; } 
+
         public ExampleNotificationHandler(IUnityMediatR mediatR)
         {
             m_UnityMediatR = mediatR;
-            m_Disposable = mediatR.Register<ExampleNotification, AnotherNotification, YetAnotherNotification>(Handle, Handle, Handle);
         }
 
-        public void Handle(ExampleNotification channelTypeMessage)
+        public void Handle(ExampleNotification notification)
         {
-            Debug.Log(channelTypeMessage.ChannelMessage);
+            Debug.Log(notification.Message);
         }
 
-        public void Handle(AnotherNotification notificationMessage)
+        public void Handle(AnotherNotification notification)
         {
-            Debug.Log(notificationMessage.ChannelMessage);
+            Debug.Log(notification.Message);
         }
         
-        public void Handle(YetAnotherNotification channelTypeMessage)
+        public void Handle(YetAnotherNotification notification)
         {
             throw new NotImplementedException();
         }
 
-        public void Dispose() => m_Disposable.Dispose();
+        public void Dispose()
+        {
+            MediatRDisposables.Dispose();
+        }
     }
 }

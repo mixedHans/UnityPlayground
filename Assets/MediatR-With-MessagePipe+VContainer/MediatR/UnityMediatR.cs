@@ -1,5 +1,5 @@
-using System;
 using MessagePipe;
+using System;
 using VContainer;
 
 namespace MediatR_With_MessagePipe_VContainer
@@ -12,8 +12,14 @@ namespace MediatR_With_MessagePipe_VContainer
         {
             m_resolver = resolver;
         }
-    
-        public TResponse Send<TRequest, TResponse>(TRequest request)
+        public void Send<TRequest>(TRequest request) where TRequest : IRequest
+        {
+            var handler = m_resolver.Resolve<IRequestHandler<TRequest, NullResponse>>();
+            handler.Invoke(request);
+        }
+
+
+        public TResponse Send<TRequest, TResponse>(TRequest request) where TRequest : IRequest
         {
             var handler = m_resolver.Resolve<IRequestHandler<TRequest, TResponse>>();
             return handler.Invoke(request);

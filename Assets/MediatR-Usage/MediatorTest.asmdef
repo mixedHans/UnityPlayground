@@ -1,0 +1,19 @@
+{
+    "name": "MediatorTest",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:55c1408d82b54c142b95d073a3e2aa2f",
+        "GUID:f24cf67903b27ae498b3069ecc30cc11",
+        "GUID:08b38f39e2d9e594389b7a4cf4c2c338"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,13 +1,13 @@
-using MessagePipe;
+using UnityEngine;
 
 namespace MediatR_With_MessagePipe_VContainer
 {
-    // Todo: RequestHandler without return type
-    public sealed class ExampleRequestHandler : IRequestHandler<string, string>
+    public sealed class ExampleRequestHandler : IMediatRRequestHandler<ExampleRequest, string>
     {
-        public string Invoke(string request)
+        public string Invoke(ExampleRequest request)
         {
-            return request + " pong";
+            Debug.Log("Handled Example Request!");
+            return "Hello From ExampleRequestHandler!";
         }
     }
 }

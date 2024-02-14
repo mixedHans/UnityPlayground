@@ -7,10 +7,7 @@ namespace MediatR_With_MessagePipe_VContainer
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<ExampleNotificationHandler>(Lifetime.Singleton)
-                .AsImplementedInterfaces();
-        
-            builder.RegisterBuildCallback(c => c.Resolve<INotificationHandler<ExampleNotification>>());
+            builder.RegisterMediatRNotificationHandler<ExampleNotification, AnotherNotification, YetAnotherNotification, ExampleNotificationHandler>(Lifetime.Singleton);
         }
     }
 }

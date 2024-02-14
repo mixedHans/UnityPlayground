@@ -1,11 +1,6 @@
 namespace MediatR_With_MessagePipe_VContainer
 {
-    //Todo: Type Restriction for Requests? --> Struct, Record, CustomClass? 
-    //--> IRequest
-    
-    public 
-    
-    public sealed class ExampleRequest
+    public sealed class ExampleRequest : IRequest
     {
         public string ExampleRequestString = "ExampleRequestString";
     }
