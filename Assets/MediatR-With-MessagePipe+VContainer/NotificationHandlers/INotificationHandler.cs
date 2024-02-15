@@ -1,9 +1,8 @@
-using MessagePipe;
 using System;
 
 namespace MediatR_With_MessagePipe_VContainer
 {
-    public interface INotificationHandler<in TNotification> 
+    public interface INotificationHandler<in TNotification> : IDisposable
         where TNotification : INotification
     {
         IDisposable MediatRDisposables { get; set; }

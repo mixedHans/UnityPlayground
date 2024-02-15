@@ -1,4 +1,4 @@
-namespace MediatR_With_MessagePipe_VContainer
+namespace MediatR_With_MessagePipe_VContainer.Usage
 {
     public sealed class ExampleNotification : INotification
     {

@@ -2,9 +2,9 @@
 using UnityEngine;
 using VContainer;
 
-namespace MediatR_With_MessagePipe_VContainer
+namespace MediatR_With_MessagePipe_VContainer.Usage
 {
-    public class MeditatRTest : MonoBehaviour
+    public class MeditatRRuntimeTest : MonoBehaviour
     {
         private IUnityMediatR m_MediatR;
 

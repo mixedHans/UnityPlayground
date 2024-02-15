@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MediatR_With_MessagePipe_VContainer
+namespace MediatR_With_MessagePipe_VContainer.Usage
 {
-    public sealed class ExampleRequestHandlerWithoutReturn : IMediatRRequestHandler<ExampleRequest>
+    public sealed class ExampleRequestHandlerWithoutResponseWithoutReturn : IMediatRRequestHandler<ExampleRequest>
     {
         public void InvokeWithoutReturn(ExampleRequest request)
         {

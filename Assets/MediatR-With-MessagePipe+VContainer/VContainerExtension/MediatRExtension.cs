@@ -1,4 +1,5 @@
 ﻿using MessagePipe;
+using UnityEngine;
 using VContainer;
 
 namespace MediatR_With_MessagePipe_VContainer
@@ -13,7 +14,16 @@ namespace MediatR_With_MessagePipe_VContainer
             where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            builder.RegisterRequestHandler<TRequest, TResponse, TRequestHandler>(_options);
+            if (!builder.Exists(typeof(IMediatRRequestHandler<TRequest, TResponse>), true))
+            {
+                builder.Register(typeof(TRequestHandler), Lifetime.Singleton)
+                    .As(typeof(IMediatRRequestHandler<TRequest, TResponse>));
+            }
+            else
+            {
+                Debug.LogWarning("You are trying to register multiple MediatRRequestHandlers. This is not allowed!" +
+                                 $"Handler: {typeof(TRequestHandler)}");
+            }
             return builder;
         }
 
@@ -23,7 +33,16 @@ namespace MediatR_With_MessagePipe_VContainer
             where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            builder.RegisterRequestHandler<TRequest, NullResponse, TRequestHandler>(_options);
+            if (!builder.Exists(typeof(IMediatRRequestHandler<TRequest, NullResponse>), true))
+            {
+                builder.Register(typeof(TRequestHandler), Lifetime.Singleton)
+                    .As(typeof(IMediatRRequestHandler<TRequest, NullResponse>));
+            }
+            else
+            {
+                Debug.LogWarning("You are trying to register multiple MediatRRequestHandlers. This is not allowed!" +
+                                 $"Handler: {typeof(TRequestHandler)}");
+            }
             return builder;
         }
 
@@ -36,6 +55,22 @@ namespace MediatR_With_MessagePipe_VContainer
             return builder;
         }
 
+        public static IContainerBuilder RegisterNotificationTypes(this IContainerBuilder builder)
+        {
+            _options ??= builder.RegisterMessagePipe();
+            foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (typeof(INotification).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                    {
+                        // builder.Register(type, typeof(MessageBroker<>))
+                    }
+                }
+            }
+            return builder;
+        }
+        
         public static IContainerBuilder RegisterMediatRNotificationHandler<TNotification, TNotificationHandler>(
             this IContainerBuilder builder, Lifetime lifetime = Lifetime.Singleton)
             where TNotificationHandler : INotificationHandler<TNotification> where TNotification : INotification
@@ -43,15 +78,13 @@ namespace MediatR_With_MessagePipe_VContainer
             builder.Register<INotificationHandler<TNotification>, TNotificationHandler>(lifetime);
             builder.RegisterBuildCallback(container =>
             {
-                var mediatr = container.Resolve<IUnityMediatR>();
-
                 builder.RegisterBuildCallback(container =>
                 {
-                    var mediatr = container.Resolve<IUnityMediatR>();
                     var bag = DisposableBag.CreateBuilder();
 
                     // T1
                     var notificationHandler1 = container.Resolve<INotificationHandler<TNotification>>();
+                    var mediatr = container.Resolve<IUnityMediatR>();
                     mediatr.Register<TNotification>(notificationHandler1.Handle).AddTo(bag);
 
                     // Add to disposables
@@ -131,7 +164,8 @@ namespace MediatR_With_MessagePipe_VContainer
             where T4 : INotification
         {
             builder.Register<TNotificationHandler>(lifetime)
-                .As<INotificationHandler<T1>, INotificationHandler<T2>, INotificationHandler<T3>, INotificationHandler<T4>>();
+                .As<INotificationHandler<T1>, INotificationHandler<T2>, INotificationHandler<T3>,
+                    INotificationHandler<T4>>();
 
             builder.RegisterBuildCallback(container =>
             {
@@ -171,10 +205,10 @@ namespace MediatR_With_MessagePipe_VContainer
         {
             builder.Register<TNotificationHandler>(lifetime)
                 .As(typeof(INotificationHandler<T1>),
-                typeof(INotificationHandler<T2>),
-                typeof(INotificationHandler<T3>),
-                typeof(INotificationHandler<T4>),
-                typeof(INotificationHandler<T5>));
+                    typeof(INotificationHandler<T2>),
+                    typeof(INotificationHandler<T3>),
+                    typeof(INotificationHandler<T4>),
+                    typeof(INotificationHandler<T5>));
 
             builder.RegisterBuildCallback(container =>
             {
