@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: Straumann.Mediator.Application.ParentLifetimeScope
+    TypeName: Straumann.Mediator.Example.ParentLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
