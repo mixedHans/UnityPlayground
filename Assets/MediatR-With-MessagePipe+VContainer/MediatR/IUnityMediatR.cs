@@ -1,8 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MessagePipe;
 
-namespace MediatR_With_MessagePipe_VContainer
+namespace Mediator_With_MessagePipe_VContainer
 {
     public interface IUnityMediatR
     {

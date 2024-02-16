@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
-    public sealed class ExampleRequestHandlerWithoutReturn : IMediatRRequestHandler<ExampleRequest>
+    public sealed class ExampleRequestHandlerWithoutReturn : IRequestHandler<ExampleRequest>
     {
         public void Invoke(ExampleRequest request)
         {

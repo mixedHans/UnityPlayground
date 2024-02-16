@@ -2,9 +2,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
-    public sealed class ExampleAsyncRequestHandler : IAsyncMediatRRequestHandler<ExampleRequest, string>
+    public sealed class ExampleAsyncRequestHandler : IAsyncRequestHandler<ExampleRequest, string>
     {
         public async Task<string> InvokeAsync(ExampleRequest request, CancellationToken cancellationToken)
         {
@@ -14,7 +14,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         }
     }
     
-    public sealed class AnotherAsyncExampleRequestHandler : IAsyncMediatRRequestHandler<ExampleRequest, string>
+    public sealed class AnotherAsyncExampleRequestHandler : IAsyncRequestHandler<ExampleRequest, string>
     {
         public async Task<string> InvokeAsync(ExampleRequest request, CancellationToken cancellationToken)
         {
@@ -24,7 +24,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         }
     }
     
-    public sealed class ExampleAsyncRequestHandlerWithoutReturn : IAsyncMediatRRequestHandler<ExampleRequest>
+    public sealed class ExampleAsyncRequestHandlerWithoutReturn : IAsyncRequestHandler<ExampleRequest>
     {
         public async Task InvokeAsync(ExampleRequest request, CancellationToken cancellationToken)
         {

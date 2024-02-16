@@ -1,12 +1,22 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace MediatR_With_MessagePipe_VContainer
+namespace Mediator_With_MessagePipe_VContainer
 {
-    public interface INotificationHandler<in TNotification> : IDisposable
+    // Todo: Implement AsyncNotificationHandlers
+    public interface INotificationHandler<in TNotification> : IDisposable//, IAsyncNotificationHandler<TNotification>
         where TNotification : INotification
     {
-        IDisposable MediatRDisposables { get; set; }
-
+        
+        // Task IAsyncNotificationHandler<TNotification>.HandleAsync(TNotification notification, CancellationToken cancellationToken)
+        // {
+        //     Handle(notification);
+        //     return Task.CompletedTask;
+        // }
+        
+        IDisposable NotificationDisposable { get; set; }
+        
         void Handle(TNotification notification);
     }
 }

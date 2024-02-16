@@ -3,9 +3,13 @@ using MessagePipe;
 using UnityEngine;
 using VContainer;
 
-namespace MediatR_With_MessagePipe_VContainer
+namespace Mediator_With_MessagePipe_VContainer
 {
-    public static class MediatRExtension
+    // Todo: Rename mediatR to mediator
+    // Todo: Move extensions in own Assembly: VContainer.Mediator
+    // Todo: Make all async
+    // Todo: Namespaces to Straumann.Mediator
+    public static class MediatorExtension
     {
         private static MessagePipeOptions _options;
 
@@ -14,11 +18,11 @@ namespace MediatR_With_MessagePipe_VContainer
         // Sync RequestHandlers
         public static RegistrationBuilder RegisterMediatRRequestHandler<TRequest, TResponse, TRequestHandler>(
             this IContainerBuilder builder)
-            where TRequestHandler : IMediatRRequestHandler<TRequest, TResponse> where TRequest : IRequest
+            where TRequestHandler : IRequestHandler<TRequest, TResponse> where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            if (!builder.Exists(typeof(IMediatRRequestHandler<TRequest, TResponse>), true))
-                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IMediatRRequestHandler<TRequest, TResponse>));
+            if (!builder.Exists(typeof(IRequestHandler<TRequest, TResponse>), true))
+                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IRequestHandler<TRequest, TResponse>));
             
             Debug.LogWarning($"You are trying to register multiple MediatRRequestHandlers for the same type. This is not allowed! " +
                              $"Handler: {typeof(TRequestHandler)} RequestType: {typeof(TRequest)} ResponseType: {typeof(TResponse)}");
@@ -27,11 +31,11 @@ namespace MediatR_With_MessagePipe_VContainer
 
         public static RegistrationBuilder RegisterMediatRRequestHandler<TRequest, TRequestHandler>(
             this IContainerBuilder builder)
-            where TRequestHandler : IMediatRRequestHandler<TRequest> where TRequest : IRequest
+            where TRequestHandler : IRequestHandler<TRequest> where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            if (!builder.Exists(typeof(IMediatRRequestHandler<TRequest>), true))
-                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IMediatRRequestHandler<TRequest>));
+            if (!builder.Exists(typeof(IRequestHandler<TRequest>), true))
+                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IRequestHandler<TRequest>));
             
             Debug.LogWarning($"You are trying to register multiple MediatRRequestHandlers for the same type. This is not allowed! " +
                              $"Handler: {typeof(TRequestHandler)} RequestType: {typeof(TRequest)}");
@@ -41,11 +45,11 @@ namespace MediatR_With_MessagePipe_VContainer
         // Async RequestHandlers
         public static RegistrationBuilder RegisterAsyncMediatRRequestHandler<TRequest, TResponse, TRequestHandler>(
             this IContainerBuilder builder)
-            where TRequestHandler : IAsyncMediatRRequestHandler<TRequest, TResponse> where TRequest : IRequest
+            where TRequestHandler : IAsyncRequestHandler<TRequest, TResponse> where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            if (!builder.Exists(typeof(IAsyncMediatRRequestHandler<TRequest, TResponse>), true))
-                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IAsyncMediatRRequestHandler<TRequest, TResponse>));
+            if (!builder.Exists(typeof(IAsyncRequestHandler<TRequest, TResponse>), true))
+                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IAsyncRequestHandler<TRequest, TResponse>));
             
             Debug.LogWarning($"You are trying to register multiple MediatRRequestHandlers for the same type. This is not allowed! " +
                              $"Handler: {typeof(TRequestHandler)} RequestType: {typeof(TRequest)} ResponseType: {typeof(TResponse)}");
@@ -54,11 +58,11 @@ namespace MediatR_With_MessagePipe_VContainer
 
         public static RegistrationBuilder RegisterAsyncMediatRRequestHandler<TRequest, TRequestHandler>(
             this IContainerBuilder builder)
-            where TRequestHandler : IAsyncMediatRRequestHandler<TRequest> where TRequest : IRequest
+            where TRequestHandler : IAsyncRequestHandler<TRequest> where TRequest : IRequest
         {
             _options ??= builder.RegisterMessagePipe();
-            if (!builder.Exists(typeof(IAsyncMediatRRequestHandler<TRequest>), true))
-                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IAsyncMediatRRequestHandler<TRequest>));
+            if (!builder.Exists(typeof(IAsyncRequestHandler<TRequest>), true))
+                return builder.Register(typeof(TRequestHandler), Lifetime.Singleton).As(typeof(IAsyncRequestHandler<TRequest>));
             
             Debug.LogWarning($"You are trying to register multiple MediatRRequestHandlers for the same type. This is not allowed! " +
                              $"Handler: {typeof(TRequestHandler)} RequestType: {typeof(TRequest)}");
@@ -78,126 +82,48 @@ namespace MediatR_With_MessagePipe_VContainer
         #endregion
 
         #region SyncNotificationHandlers
-        public static RegistrationBuilder RegisterMediatRNotificationHandler<TNotification, TNotificationHandler>(
-            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
-            where TNotificationHandler : INotificationHandler<TNotification> where TNotification : INotification
-        {
-            builder.RegisterBuildCallback(container =>
-            {
-                var bagBuilder = DisposableBag.CreateBuilder();
-
-                container.BindHandler<TNotification>(bagBuilder);
-
-                var handler = container.Resolve<INotificationHandler<TNotification>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
-            });
-            return builder.Register<INotificationHandler<TNotification>, TNotificationHandler>(lifetime);
-        }
-        
-        public static RegistrationBuilder RegisterMediatRNotificationHandler<T1, T2, TNotificationHandler>(
-            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
-            where TNotificationHandler : INotificationHandler<T1> 
-            where T1 : INotification where T2 : INotification
-        {
-            builder.RegisterBuildCallback(container =>
-            {
-                var bagBuilder = DisposableBag.CreateBuilder();
-
-                container.BindHandler<T1>(bagBuilder);
-                container.BindHandler<T2>(bagBuilder);
-
-                var handler = container.Resolve<INotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
-            });
-            
-            return builder.Register<TNotificationHandler>(lifetime).As<INotificationHandler<T1>, INotificationHandler<T2>>();
-        }
-        
-        public static RegistrationBuilder RegisterMediatRNotificationHandler<T1, T2, T3, TNotificationHandler>(
-            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
-            where TNotificationHandler : INotificationHandler<T1>
-            where T1 : INotification where T2 : INotification where T3 : INotification
-        {
-            builder.RegisterBuildCallback(container =>
-            {
-                var bagBuilder = DisposableBag.CreateBuilder();
-
-                container.BindHandler<T1>(bagBuilder);
-                container.BindHandler<T2>(bagBuilder);
-                container.BindHandler<T3>(bagBuilder);
-            
-                var handler = container.Resolve<INotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
-            });
-
-            return builder.Register<TNotificationHandler>(lifetime).As<INotificationHandler<T1>, INotificationHandler<T2>, INotificationHandler<T3>>();
-        }
-
-        public static RegistrationBuilder RegisterMediatRNotificationHandler<T1, T2, T3, T4, TNotificationHandler>(
-            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
-            where TNotificationHandler : INotificationHandler<T1> 
-            where T1 : INotification where T2 : INotification where T3 : INotification where T4 : INotification
-        {
-            builder.RegisterBuildCallback(container =>
-            {
-                var bagBuilder = DisposableBag.CreateBuilder();
-
-                container.BindHandler<T1>(bagBuilder);
-                container.BindHandler<T2>(bagBuilder);
-                container.BindHandler<T3>(bagBuilder);
-                container.BindHandler<T4>(bagBuilder);
-
-                var handler = container.Resolve<INotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
-            });
-            
-            return builder.Register<TNotificationHandler>(lifetime).As<INotificationHandler<T1>, INotificationHandler<T2>, INotificationHandler<T3>, INotificationHandler<T4>>();
-        }
-
-        public static RegistrationBuilder RegisterMediatRNotificationHandler<T1, T2, T3, T4, T5, TNotificationHandler>(
-            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
-            where TNotificationHandler : INotificationHandler<T1> 
-            where T1 : INotification where T2 : INotification where T3 : INotification where T4 : INotification where T5 : INotification
-        {
-            builder.RegisterBuildCallback(container =>
-            {
-                var bagBuilder = DisposableBag.CreateBuilder();
-
-                container.BindHandler<T1>(bagBuilder);
-                container.BindHandler<T2>(bagBuilder);
-                container.BindHandler<T3>(bagBuilder);
-                container.BindHandler<T4>(bagBuilder);
-                container.BindHandler<T5>(bagBuilder);
-
-                var handler = container.Resolve<INotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
-            });
-            
-            return builder.Register<TNotificationHandler>(lifetime).As(typeof(INotificationHandler<T1>), typeof(INotificationHandler<T2>), typeof(INotificationHandler<T3>), typeof(INotificationHandler<T4>), typeof(INotificationHandler<T5>));
-        }
-
-        // Todo: Check Multiple Registrations of the same handler!
-        private static bool CheckMultipleRegistrations<TNotification, TNotificationHandler>(IContainerBuilder builder)
-            where TNotificationHandler : INotificationHandler<TNotification> where TNotification : INotification
-        {
-            if (!builder.Exists(typeof(INotificationHandler<TNotification>), true)) return false;
-            
-            Debug.LogWarning($"NotificationHandlerRegistration: You are trying to register a NotificationHandler in the same scope multiple times. This is not allowed!" +
-                             $"Handler: {typeof(INotificationHandler<TNotification>)}, Notification: {typeof(TNotification)}");
-            return true;
-        }
-        
-        private static void BindHandler<TNotification>(this IObjectResolver resolver, DisposableBagBuilder bagBuilder)
+        public static RegistrationBuilder RegisterNotificationHandler<TNotification, TNotificationHandler>(this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
             where TNotification : INotification
+            where TNotificationHandler : INotificationHandler<TNotification> 
         {
-            var notificationHandler = resolver.Resolve<INotificationHandler<TNotification>>();
-            var subscriber = resolver.Resolve<ISubscriber<TNotification>>();
-            subscriber.Subscribe(notificationHandler.Handle).AddTo(bagBuilder);
+            return builder.BindHandlersInBuildCallback<TNotification, TNotificationHandler>()
+                .Register<INotificationHandler<TNotification>, TNotificationHandler>(lifetime)
+                .AsSelf();
+        }
+
+        private static IContainerBuilder BindHandlersInBuildCallback<TNotification, TNotificationHandler>(this IContainerBuilder builder)
+            where TNotification : INotification
+            where TNotificationHandler : INotificationHandler<TNotification> 
+        {
+            builder.RegisterBuildCallback(container =>
+            {
+                var notificationHandler = container.Resolve<TNotificationHandler>();
+                var bagBuilder = DisposableBag.CreateBuilder();
+                
+                var subscriber = container.Resolve<ISubscriber<TNotification>>();
+                subscriber.Subscribe(notificationHandler.Handle).AddTo(bagBuilder);
+                
+                notificationHandler.NotificationDisposable?.AddTo(bagBuilder);
+                notificationHandler.NotificationDisposable = bagBuilder.Build();
+            });
+            return builder;
+        }
+
+        public static RegistrationBuilder RegisterNotificationHandler<TNotification1, TNotification2, TNotificationHandler>(
+            this IContainerBuilder builder, Lifetime lifetime = Lifetime.Scoped)
+            where TNotification1 : INotification where TNotification2 : INotification
+            where TNotificationHandler : INotificationHandler<TNotification1>,INotificationHandler<TNotification2>
+        {
+            return builder.RegisterNotificationHandler<TNotification1, TNotificationHandler>(lifetime)
+                .AsAdditionalNotificationHandler<TNotification2, TNotificationHandler>(builder);
+        }
+        
+        private static RegistrationBuilder AsAdditionalNotificationHandler<TNotification, TNotificationHandler>(this RegistrationBuilder registrationBuilder, IContainerBuilder containerBuilder) 
+            where TNotification : INotification 
+            where TNotificationHandler : INotificationHandler<TNotification>
+        {
+            containerBuilder.BindHandlersInBuildCallback<TNotification, TNotificationHandler>();
+            return registrationBuilder.As<INotificationHandler<TNotification>>();
         }
 
         #endregion
@@ -214,8 +140,8 @@ namespace MediatR_With_MessagePipe_VContainer
                 container.BindAsyncHandler<TNotification>(bagBuilder);
 
                 var handler = container.Resolve<IAsyncNotificationHandler<TNotification>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
+                handler.NotificationDisposable?.AddTo(bagBuilder);
+                handler.NotificationDisposable = bagBuilder.Build();
             });
             return builder.Register<IAsyncNotificationHandler<TNotification>, TAsyncNotificationHandler>(lifetime);
         }
@@ -233,8 +159,8 @@ namespace MediatR_With_MessagePipe_VContainer
                 container.BindAsyncHandler<T2>(bagBuilder);
 
                 var handler = container.Resolve<IAsyncNotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
+                handler.NotificationDisposable?.AddTo(bagBuilder);
+                handler.NotificationDisposable = bagBuilder.Build();
             });
             
             return builder.Register<TAsyncNotificationHandler>(lifetime).As<IAsyncNotificationHandler<T1>, IAsyncNotificationHandler<T2>>();
@@ -254,8 +180,8 @@ namespace MediatR_With_MessagePipe_VContainer
                 container.BindAsyncHandler<T3>(bagBuilder);
 
                 var handler = container.Resolve<IAsyncNotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
+                handler.NotificationDisposable?.AddTo(bagBuilder);
+                handler.NotificationDisposable = bagBuilder.Build();
             });
 
             return builder.Register<TAsyncNotificationHandler>(lifetime).As<IAsyncNotificationHandler<T1>, IAsyncNotificationHandler<T2>, IAsyncNotificationHandler<T3>>();
@@ -276,8 +202,8 @@ namespace MediatR_With_MessagePipe_VContainer
                 container.BindAsyncHandler<T4>(bagBuilder);
 
                 var handler = container.Resolve<INotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
+                handler.NotificationDisposable?.AddTo(bagBuilder);
+                handler.NotificationDisposable = bagBuilder.Build();
             });
             
             return builder.Register<TAsyncNotificationHandler>(lifetime).As<IAsyncNotificationHandler<T1>, IAsyncNotificationHandler<T2>, IAsyncNotificationHandler<T3>, IAsyncNotificationHandler<T4>>();
@@ -299,8 +225,8 @@ namespace MediatR_With_MessagePipe_VContainer
                 container.BindAsyncHandler<T5>(bagBuilder);
 
                 var handler = container.Resolve<IAsyncNotificationHandler<T1>>();
-                handler.MediatRDisposables?.AddTo(bagBuilder);
-                handler.MediatRDisposables = bagBuilder.Build();
+                handler.NotificationDisposable?.AddTo(bagBuilder);
+                handler.NotificationDisposable = bagBuilder.Build();
             });
             
             return builder.Register<TAsyncNotificationHandler>(lifetime).As(typeof(IAsyncNotificationHandler<T1>), typeof(IAsyncNotificationHandler<T2>), typeof(IAsyncNotificationHandler<T3>), typeof(IAsyncNotificationHandler<T4>), typeof(IAsyncNotificationHandler<T5>));

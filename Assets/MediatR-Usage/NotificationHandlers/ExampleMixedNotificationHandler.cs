@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
     public sealed class ExampleMixedNotificationHandler : 
         IAsyncNotificationHandler<ExampleNotification>,
         INotificationHandler<ExampleNotification>
     {
-        public IDisposable MediatRDisposables { get; set; }
+        public IDisposable NotificationDisposable { get; set; }
 
         public ExampleMixedNotificationHandler()
         {
@@ -20,7 +20,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         {
             Debug.Log("[MixedHandler] Handle ExampleNotification");
         }
-        
+
         public async Task HandleAsync(ExampleNotification notification, CancellationToken cancellationToken)
         {
             Debug.Log("[ExampleMixedNotificationHandler] Start handling notification...");
@@ -31,7 +31,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         public void Dispose()
         {
             Debug.Log("[ExampleMixedNotificationHandler] Disposing NotificationHandlers");
-            MediatRDisposables?.Dispose();
+            NotificationDisposable?.Dispose();
         }
     }
 }

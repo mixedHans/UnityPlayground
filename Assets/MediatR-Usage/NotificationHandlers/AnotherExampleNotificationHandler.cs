@@ -1,14 +1,15 @@
 using System;
 using UnityEngine;
+using VContainer;
 
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
     public sealed class AnotherExampleNotificationHandler : 
         INotificationHandler<ExampleNotification>,
         INotificationHandler<AnotherNotification>,
         INotificationHandler<YetAnotherNotification>
     {
-        public IDisposable MediatRDisposables { get; set; } 
+        public IDisposable NotificationDisposable { get; set; } 
         
         public AnotherExampleNotificationHandler()
         {
@@ -33,7 +34,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         public void Dispose()
         {
             Debug.Log("[AnotherExampleNotificationHandler] Disposing NotificationHandlers");
-            MediatRDisposables?.Dispose();
+            NotificationDisposable?.Dispose();
         }
     }
 }

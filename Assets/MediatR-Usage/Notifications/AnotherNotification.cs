@@ -1,4 +1,4 @@
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
     public sealed class AnotherNotification : INotification
     {

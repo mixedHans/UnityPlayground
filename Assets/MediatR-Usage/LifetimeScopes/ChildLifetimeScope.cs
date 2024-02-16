@@ -1,22 +1,35 @@
+using System.Reflection;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace MediatR_With_MessagePipe_VContainer.Usage
+namespace Mediator_With_MessagePipe_VContainer.Usage
 {
     public sealed class ChildLifetimeScope : LifetimeScope
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterMediatRNotificationHandler<
-                AnotherNotification, 
-                AnotherExampleNotificationHandler>();
-            
-            builder.RegisterMediatRNotificationHandler<
-                ExampleNotification, 
-                ExampleNotificationHandler>();
+            // builder.RegisterMediatRNotificationHandler<
+            //     AnotherNotification, ExampleNotification,
+            //     AnotherExampleNotificationHandler>();
 
-            builder.RegisterMediatRNotificationHandler<
+            // builder.RegisterMediatRNotificationHandler
+            //     <AnotherNotification, ExampleNotification>()
+            //     .As<ExampleNotificationHandler>();
+            //
+            // builder.RegisterMediatRNotificationHandler<ExampleNotificationHandler>()
+            //     .For<AnotherNotification>()
+            //     .For<ExampleNotification>();
+
+            builder.RegisterNotificationHandler<
+                AnotherNotification, ExampleNotification, 
+                ExampleNotificationHandler>();
+            
+            builder.RegisterNotificationHandler<
+                AnotherNotification, ExampleNotification, 
+                AnotherExampleNotificationHandler>();
+
+            builder.RegisterNotificationHandler<
                 ExampleNotification, 
                 ExampleMixedNotificationHandler>();
             
