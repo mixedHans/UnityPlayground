@@ -1,4 +1,5 @@
-﻿using MessagePipe;
+﻿using System.Threading.Tasks;
+using MessagePipe;
 
 namespace MediatR_With_MessagePipe_VContainer
 {
@@ -9,17 +10,12 @@ namespace MediatR_With_MessagePipe_VContainer
         TResponse Invoke(TRequest request);    
     }
 
-    // Todo: register without response by itself
     // Without response
-    public interface IMediatRRequestHandler<in TRequest> : IMediatRRequestHandler<TRequest, NullResponse> 
+    public interface IMediatRRequestHandler<in TRequest>
         where TRequest : IRequest
     {
-        void InvokeWithoutReturn(TRequest request);
-
-        NullResponse IMediatRRequestHandler<TRequest, NullResponse>.Invoke(TRequest request)
-        {
-            InvokeWithoutReturn(request);
-            return null;
-        }
+        void Invoke(TRequest request);
     }
+    
+
 }

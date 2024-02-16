@@ -6,7 +6,7 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
     {
         public string Invoke(ExampleRequest request)
         {
-            Debug.Log("Handled Example Request!");
+            Debug.Log("[ExampleRequestHandler] Handled ExampleRequest!");
             return "Hello From ExampleRequestHandler!";
         }
     }
@@ -15,8 +15,8 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
     {
         public string Invoke(ExampleRequest request)
         {
-            Debug.Log("Handled Example Request!");
-            return "Hello From ExampleRequestHandler!";
+            Debug.Log("[AnotherExampleRequestHandler] Handled ExampleRequest!");
+            return "Hello From AnotherExampleRequestHandler!";
         }
     }
 }

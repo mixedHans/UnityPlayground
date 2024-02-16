@@ -1,5 +1,8 @@
 using MessagePipe;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using VContainer;
 
 namespace MediatR_With_MessagePipe_VContainer
@@ -15,7 +18,7 @@ namespace MediatR_With_MessagePipe_VContainer
         
         public void Send<TRequest>(TRequest request) where TRequest : IRequest
         {
-            var handler = m_resolver.Resolve<IMediatRRequestHandler<TRequest, NullResponse>>();
+            var handler = m_resolver.Resolve<IMediatRRequestHandler<TRequest>>();
             handler.Invoke(request);
         }
 
@@ -24,42 +27,29 @@ namespace MediatR_With_MessagePipe_VContainer
             var handler = m_resolver.Resolve<IMediatRRequestHandler<TRequest, TResponse>>();
             return handler.Invoke(request);
         }
+        
+        public Task SendAsync<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+        {
+            var handler = m_resolver.Resolve<IAsyncMediatRRequestHandler<TRequest>>();
+            return handler.InvokeAsync(request, cancellationToken);
+        }
+
+        public Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
+        {
+            var handler = m_resolver.Resolve<IAsyncMediatRRequestHandler<TRequest, TResponse>>();
+            return handler.InvokeAsync(request, cancellationToken);
+        }
 
         public void Publish<TNotification>(TNotification notification) where TNotification : INotification
         {
             var publisher = m_resolver.Resolve<IPublisher<TNotification>>();
-            
             publisher.Publish(notification);
         }
 
-        public IDisposable Register<TType>(Action<TType> handle) where TType : INotification
+        public Task PublishAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
         {
-            var subscriber = m_resolver.Resolve<ISubscriber<TType>>();
-            return subscriber.Subscribe(handle);
-        }
-
-        public IDisposable Register<T1, T2>(Action<T1> handleCallback1, Action<T2> handleCallback2) where T1 : INotification where T2 : INotification
-        {
-            var disposable1 = Register(handleCallback1);
-            var disposable2 = Register(handleCallback2);
-            return DisposableBagBuilder(disposable1, disposable2);
-        }
-        
-        public IDisposable Register<T1, T2, T3>(Action<T1> handleCallback1, Action<T2> handleCallback2, Action<T3> handleCallback3)
-            where T1 : INotification where T2 : INotification where T3 : INotification
-        {
-            var disposable1 = Register(handleCallback1);
-            var disposable2 = Register(handleCallback2);
-            var disposable3 = Register(handleCallback3);
-            return DisposableBagBuilder(disposable1, disposable2, disposable3);
-        }
-
-        private IDisposable DisposableBagBuilder(params IDisposable[] disposables)
-        {
-            var bag = DisposableBag.CreateBuilder();
-            foreach (var disposable in disposables)
-                disposable.AddTo(bag);
-            return bag.Build();
+            var publisher = m_resolver.Resolve<IAsyncPublisher<TNotification>>();
+            return publisher.PublishAsync(notification, cancellationToken).AsTask();
         }
     }
 }

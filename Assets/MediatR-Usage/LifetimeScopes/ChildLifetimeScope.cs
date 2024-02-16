@@ -1,3 +1,4 @@
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -8,10 +9,20 @@ namespace MediatR_With_MessagePipe_VContainer.Usage
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterMediatRNotificationHandler<
-                ExampleNotification, 
                 AnotherNotification, 
-                YetAnotherNotification, 
+                AnotherExampleNotificationHandler>();
+            
+            builder.RegisterMediatRNotificationHandler<
+                ExampleNotification, 
                 ExampleNotificationHandler>();
+
+            builder.RegisterMediatRNotificationHandler<
+                ExampleNotification, 
+                ExampleMixedNotificationHandler>();
+            
+            builder.RegisterAsyncMediatRNotificationHandler<
+                ExampleNotification, 
+                ExampleMixedNotificationHandler>();
         }
     }
 }
