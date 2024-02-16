@@ -1,0 +1,19 @@
+{
+    "name": "Straumann.Mediator.Example",
+    "rootNamespace": "Straumann.Mediator",
+    "references": [
+        "GUID:f24cf67903b27ae498b3069ecc30cc11",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:a82ca10bef4ae434289145d5aa62e2e0",
+        "GUID:55c1408d82b54c142b95d073a3e2aa2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
