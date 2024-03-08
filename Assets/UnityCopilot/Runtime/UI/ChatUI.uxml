@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement name="Header" style="flex-grow: 1; background-color: rgb(58, 58, 58); height: 104px; max-height: 40px; flex-direction: row;">
+            <ui:Label text=" Unity Copilot" style="font-size: 20px; align-self: flex-start; -unity-font-style: bold; color: rgb(255, 255, 255);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ChatBody" style="flex-grow: 1; background-color: rgba(152, 152, 152, 0); height: auto;">
+            <ui:ScrollView name="ScrollView" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="InputFooter" style="flex-grow: 0; background-color: rgb(255, 255, 255); height: 50px; flex-direction: row; min-height: 50px;">
+            <ui:TextField placeholder-text="Input message...." multiline="true" style="flex-grow: 1; flex-wrap: wrap; width: 0;" />
+            <ui:Button text="Send" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

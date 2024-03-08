@@ -1,0 +1,30 @@
+{
+    "name": "SemanticKernel",
+    "rootNamespace": "",
+    "references": [
+        "GUID:dbbd5fdc7f26e87449dc619a93543af5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Microsoft.SemanticKernel.dll",
+        "Microsoft.SemanticKernel.Abstractions.dll",
+        "Microsoft.SemanticKernel.Core.dll",
+        "Microsoft.SemanticKernel.Connectors.OpenAI.dll",
+        "Microsoft.Extensions.Logging.Abstractions.dll",
+        "Microsoft.Extensions.DependencyInjection.dll",
+        "Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "Azure.Core.dll",
+        "Azure.AI.OpenAI.dll",
+        "Microsoft.Bcl.AsyncInterfaces.dll",
+        "System.Text.Json.dll",
+        "Humanizer.dll",
+        "System.ClientModel.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
